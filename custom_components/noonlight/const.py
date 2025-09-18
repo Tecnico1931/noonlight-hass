@@ -11,12 +11,11 @@ DOMAIN = "noonlight"
 PLATFORMS = [Platform.SWITCH]
 
 DEFAULT_NAME = "Noonlight"
-DEFAULT_API_ENDPOINT = "https://api.noonlight.com/platform/v1"
-DEFAULT_TOKEN_ENDPOINT = "https://noonlight.konnected.io/ha/token"
+DEFAULT_API_ENDPOINT = "https://api.noonlight.com/dispatch/v1"
 
-CONF_SECRET = "secret"
+CONF_SERVER_TOKEN = "server_token"
 CONF_API_ENDPOINT = "api_endpoint"
-CONF_TOKEN_ENDPOINT = "token_endpoint"
+CONF_PHONE_NUMBER = "phone_number"
 CONF_ADDRESS_LINE1 = "address1"
 CONF_ADDRESS_LINE2 = "address2"
 CONF_CITY = "city"

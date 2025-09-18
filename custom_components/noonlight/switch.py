@@ -7,12 +7,11 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
-from .const import (  # NOONLIGHT_SERVICES_FIRE, NOONLIGHT_SERVICES_MEDICAL,
+from .const import (
     DOMAIN,
     EVENT_NOONLIGHT_ALARM_CANCELED,
     EVENT_NOONLIGHT_ALARM_CREATED,
     EVENT_NOONLIGHT_TOKEN_REFRESHED,
-    NOONLIGHT_SERVICES_POLICE,
 )
 
 DEFAULT_NAME = "Noonlight Switch"
@@ -63,7 +62,7 @@ class NoonlightSwitch(SwitchEntity):
     def __init__(self, noonlight_integration):
         """Initialize the Noonlight switch."""
         self.noonlight = noonlight_integration
-        self._alarm_type = NOONLIGHT_SERVICES_POLICE
+        self._alarm_type = "police"
         self._attr_unique_id = f"{self._alarm_type.lower()}_{Platform.SWITCH}_{
             self.noonlight.config.get('id', '')}"
         self._attr_name = DEFAULT_NAME
@@ -72,8 +71,8 @@ class NoonlightSwitch(SwitchEntity):
 
     @property
     def available(self):
-        """Ensure that the Noonlight access token is valid."""
-        return self.noonlight.access_token_expires_in.total_seconds() > 0
+        """Ensure that the Noonlight server token is valid."""
+        return bool(self.noonlight.server_token)
 
     @property
     def extra_state_attributes(self):
@@ -81,9 +80,9 @@ class NoonlightSwitch(SwitchEntity):
         attr = {}
         if self.noonlight._alarm is not None:
             alarm = self.noonlight._alarm
-            attr["alarm_status"] = alarm.status
-            attr["alarm_id"] = alarm.id
-            attr["alarm_services"] = alarm.services
+            attr["alarm_status"] = alarm.get('status')
+            attr["alarm_id"] = alarm.get('id')
+            attr["alarm_services"] = alarm.get('services', {})
         return attr
 
     @property

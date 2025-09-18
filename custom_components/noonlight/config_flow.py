@@ -15,13 +15,12 @@ from .const import (
     CONF_API_ENDPOINT,
     CONF_CITY,
     CONF_LOCATION_MODE,
-    CONF_SECRET,
+    CONF_PHONE_NUMBER,
+    CONF_SERVER_TOKEN,
     CONF_STATE,
-    CONF_TOKEN_ENDPOINT,
     CONF_ZIP,
     DEFAULT_API_ENDPOINT,
     DEFAULT_NAME,
-    DEFAULT_TOKEN_ENDPOINT,
     DOMAIN,
 )
 
@@ -103,20 +102,16 @@ async def _async_build_noonlight_schema(
                 default=_get_default(CONF_NAME),
             ): selector.TextSelector(selector.TextSelectorConfig()),
             vol.Required(
-                CONF_ID,
-                default=_get_default(CONF_ID),
+                CONF_SERVER_TOKEN,
+                default=_get_default(CONF_SERVER_TOKEN),
             ): selector.TextSelector(selector.TextSelectorConfig()),
             vol.Required(
-                CONF_SECRET,
-                default=_get_default(CONF_SECRET),
+                CONF_PHONE_NUMBER,
+                default=_get_default(CONF_PHONE_NUMBER),
             ): selector.TextSelector(selector.TextSelectorConfig()),
             vol.Required(
                 CONF_API_ENDPOINT,
                 default=_get_default(CONF_API_ENDPOINT),
-            ): selector.TextSelector(selector.TextSelectorConfig()),
-            vol.Required(
-                CONF_TOKEN_ENDPOINT,
-                default=_get_default(CONF_TOKEN_ENDPOINT),
             ): selector.TextSelector(selector.TextSelectorConfig()),
             vol.Required(
                 CONF_LOCATION_MODE,
@@ -317,7 +312,6 @@ class NoonlightConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         defaults = {
             CONF_NAME: DEFAULT_NAME,
             CONF_API_ENDPOINT: DEFAULT_API_ENDPOINT,
-            CONF_TOKEN_ENDPOINT: DEFAULT_TOKEN_ENDPOINT,
         }
 
         return self.async_show_form(
@@ -381,10 +375,9 @@ class NoonlightConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Import a config entry from configuration.yaml."""
 
         if (
-            import_config.get(CONF_ID, None) is None
-            or import_config.get(CONF_SECRET, None) is None
+            import_config.get(CONF_SERVER_TOKEN, None) is None
             or import_config.get(CONF_API_ENDPOINT, None) is None
-            or import_config.get(CONF_TOKEN_ENDPOINT, None) is None
+            or import_config.get(CONF_PHONE_NUMBER, None) is None
         ):
             _LOGGER.error(
                 f"[Noonlight] Invalid YAML Config. Cannot Import: {import_config}"

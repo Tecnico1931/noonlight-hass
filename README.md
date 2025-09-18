@@ -1,16 +1,24 @@
-# Noonlight for HomeAssistant
+# Noonlight for HomeAssistant (Self-Hosted Fork)
 
-This is the [Noonlight](https://noonlight.com) integration for HomeAssistant.
+This is a modified version of the [Noonlight](https://noonlight.com) integration for HomeAssistant that connects directly to the Noonlight API for self-hosting.
 
 [Noonlight](https://noonlight.com) connects your smart home to local emergency services to help keep you safe in case of a break-in, fire, or medical emergency.
 
 ### Noonlight service is currently only available in the United States
 
+## Key Differences from Original
+
+This fork removes the dependency on Konnected.io's intermediary service and connects directly to the Noonlight API:
+
+- **Direct API Integration**: Uses Noonlight server token authentication instead of OAuth
+- **Self-Hosted**: No dependency on Konnected.io's token service
+- **Simplified Setup**: Requires only server token from Noonlight developer portal
+
 ## How it Works
 
 Noonlight connects to emergency 9-1-1 services in all 50 U.S. states. Backed by a UL-compliant alarm monitoring center and staffed 24/7 with live operators in the United States, Noonlight is standing by to send help to your home at a moment's notice.
 
-When integrated with Home Assistant, a **Noonlight Alarm** switch will appear in your list of entities. When the Noonlight Alarm switch is turned _on_, this will send an emergency signal to Noonlight. You will be contacted by text and voice at the phone number associated with your Noonlight account. If you confirm the emergency with the Noonlight operator, or if you're unable to respond, Noonlight will dispatch local emergency services to your home using the [longitude and latitude coordinates](https://www.home-assistant.io/docs/configuration/basic/#latitude) specified in your Home Assistant configuration or an address you specify in the Noonlight configuration.
+When integrated with Home Assistant, a **Noonlight Alarm** switch will appear in your list of entities. When the Noonlight Alarm switch is turned _on_, this will send an emergency signal to Noonlight. You will be contacted by text and voice at the phone number you configure. If you confirm the emergency with the Noonlight operator, or if you're unable to respond, Noonlight will dispatch local emergency services to your home using the [longitude and latitude coordinates](https://www.home-assistant.io/docs/configuration/basic/#latitude) specified in your Home Assistant configuration or an address you specify in the Noonlight configuration.
 
 Additionally, a new service will be exposed to Home Assistant: `noonlight.create_alarm`, which allows you to explicitly specify the type of emergency service required by the alarm: medical, fire, or police. By default, the switch entity assumes "police".
 
@@ -20,25 +28,23 @@ The _Noonlight Switch_ can be activated by any Home Assistant automation, just l
 
 ## Initial set up
 
-Setup requires a U.S. based mobile phone number.
+Setup requires a U.S. based mobile phone number and a Noonlight developer account.
 
 1. Ensure that your [longitude and latitude coordinates](https://www.home-assistant.io/docs/configuration/basic/#latitude) are set accurately so that Noonlight knows where to send help.
 
-1. Click the link below to set up a Noonlight account and authorize Home Assistant to create alarms on your behalf:
+2. Create a developer account at [developer.noonlight.com](https://developer.noonlight.com)
 
-    * [Connect to Noonlight](https://noonlight.konnected.io/ha/auth)
+3. Obtain your server token from the developer dashboard
 
-1. Save the resulting YAML snippet. You will need to enter these details into Home Assistant when adding the integration.
+4. Install this integration in Home Assistant (see [Installation](#installation) below)
 
 ### Configuration
 
-* `Noonlight ID`: A unique identifier assigned to you when you complete the [initial setup steps](#initial-set-up)
+* `Server Token`: Your server token from the Noonlight developer portal
 
-* `Noonlight Secret`: A secret key associated with your id
+* `Phone Number`: U.S. mobile phone number for emergency contact
 
-* `Noonlight API Endpoint`: The Noonlight API endpoint used when creating an alarm
-
-* `Token Endpoint`: The OAuth endpoint used to refresh your Noonlight auth token (hosted by [Konnected](https://konnected.io))
+* `API Endpoint`: The Noonlight API endpoint (default: `https://api.noonlight.com/dispatch/v1`)
 
 * `Location Mode`: Choose between Latitude/Longitude or Address
 
@@ -59,6 +65,23 @@ Setup requires a U.S. based mobile phone number.
 * `State`: Two-letter state abbreviation
 
 * `Zip`: Zip code
+
+## Installation
+
+### Method 1: Manual Installation
+
+1. Copy the `custom_components/noonlight` folder to your Home Assistant's `custom_components` directory
+2. Restart Home Assistant
+3. Go to Settings → Devices & Services → Add Integration
+4. Search for "Noonlight" and configure with your server token and phone number
+
+### Method 2: HACS (if supported)
+
+1. Add this repository to HACS as a custom repository
+2. Install the Noonlight integration through HACS
+3. Restart Home Assistant
+4. Go to Settings → Devices & Services → Add Integration
+5. Search for "Noonlight" and configure with your server token and phone number
 
 ## Automation Examples
 
@@ -96,6 +119,31 @@ automation:
           service: fire
 ```
 
+## Troubleshooting
+
+### Common Issues
+
+1. **"Failed to send an alarm to Noonlight"**
+   - Verify your server token is correct
+   - Check that your phone number is in U.S. format
+   - Ensure Home Assistant has internet connectivity
+
+2. **Integration not appearing**
+   - Restart Home Assistant after installation
+   - Check logs for any import errors
+   - Verify the custom_components/noonlight folder structure
+
+3. **Authentication errors**
+   - Regenerate your server token from the Noonlight developer portal
+   - Ensure the token has proper permissions
+
+### Support
+
+This is a community-maintained fork. For issues:
+- Check the GitHub repository for similar issues
+- Review Home Assistant logs for error details
+- Test with the original Konnected.io integration to isolate issues
+
 ## Warnings & Disclaimers
 
 <p class='note warning'>
@@ -104,5 +152,8 @@ automation:
 
 ### NO GUARANTEE
 
-**This integration is provided as-is without warranties of any kind. Using Noonlight with Home Assistant involves multiple service providers and potential points of failure, including (but not limited to) your internet service provider, 3rd party hosting services such as Amazon Web Services, and the Home Assistant software platform.**
-Please read and understand the [Noonlight terms of use](https://noonlight.com/terms), [Konnected terms of use](https://konnected.io/terms) and [Home Assistant terms of Service](https://www.home-assistant.io/tos/), each of which include important limitations of liability and indemnification provisions.
+**This integration is provided as-is without warranties of any kind. Using Noonlight with Home Assistant involves multiple service providers and potential points of failure, including (but not limited to) your internet service provider, 3rd party hosting services, and the Home Assistant software platform.**
+
+**This is a community-maintained fork that bypasses Konnected.io's services. While this provides more control, it also means less testing and support than the original integration.**
+
+Please read and understand the [Noonlight terms of use](https://noonlight.com/terms) and [Home Assistant terms of Service](https://www.home-assistant.io/tos/), each of which include important limitations of liability and indemnification provisions.
